@@ -19,14 +19,28 @@ app.get("/", function (req, res) {
 });
 
 
+
 // your first API endpoint... 
-app.get("/api/:dateOrTimestamp", function (req, res) {
-  let unix;
-  let utc;
-  const dateObj=new Date(/^\d+$/.test(req.params.dateOrTimestamp)?parseInt(req.params.dateOrTimestamp):req.params.dateOrTimestamp)
-  unix=dateObj.getTime()
-  utc=dateObj.toUTCString()
-  res.json({unix,utc})
+app.get("/api/:dateOrTimestamp?", function (req, res) {
+  const {dateOrTimestamp}=req.params
+
+  let dateObj
+  if(dateOrTimestamp){
+    dateObj=new Date(/^\d+$/.test(dateOrTimestamp)?parseInt(dateOrTimestamp):dateOrTimestamp)
+  }
+  else{
+    dateObj=new Date()  
+  }
+  if(dateObj.getTime()){
+    let unix;
+    let utc;
+    unix=dateObj.getTime()
+    utc=dateObj.toUTCString()
+    res.json({unix,utc})
+  }else{
+    res.json({error:"Invalid Date"})
+  }
+
 
   return
   // assume that it is timestamp if it is pure num
